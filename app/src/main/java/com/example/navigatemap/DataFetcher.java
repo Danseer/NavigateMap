@@ -22,9 +22,10 @@ import java.net.URI;
 
 public class DataFetcher {
     private static final String TAG = "DataFetcher";
-    private static final String API_KEY = "AIzaSyDaafgvECggiEKFwvGUUqL8VIzgMqerLSI";
+    private static final String API_KEY = "AIzaSyCDyevc9QSATeOsRGEAE6vX3TJfXv4eydQ";
     private static final String API_URL = "https://maps.googleapis.com/maps/api/geocode/json";
-
+    private static final String LANG="ru";
+    private static final String RESULT_TYPE="country";
 
     public DataFetcher() throws IOException {
     }
@@ -33,54 +34,49 @@ public class DataFetcher {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=AIzaSyDaafgvECggiEKFwvGUUqL8VIzgMqerLSI")
+                .url(URLSpec)
                 .build();
         Response response = client.newCall(request).execute();
         String result = response.body().string();
-
         return result;
 
     }
 
 
     public String fetch(Double lat, Double lng) {
-        String item = "err";
+
         String url = Uri.parse(API_URL)
                 .buildUpon()
                 .appendQueryParameter("latlng", lat.toString() + ',' + lng.toString())
+                .appendQueryParameter("result_type", RESULT_TYPE)
+                .appendQueryParameter("language", LANG)
                 .appendQueryParameter("key", API_KEY)
                 .build().toString();
 
 
         try {
-           String jsonString = getJSONString(url);
-            //JSONObject jsonBody = new JSONObject(jsonString);
-            //return Parsing(item, jsonBody);
-            return url;
-            //return jsonString;
+            String jsonString = getJSONString(url);
+            Log.e("jsonString", jsonString);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            JSONArray resultsJSONArray = jsonBody.getJSONArray("results");
+
+            JSONObject formatted_address = resultsJSONArray.getJSONObject(0);
+            String country = String.valueOf(formatted_address.getString("formatted_address"));
+
+            Log.e("country", country);
+            return country;
+
+
         } catch (IOException e) {
-           e.printStackTrace();
-           Log.e(TAG, "Ощибка загрузки данных", e);
+            e.printStackTrace();
+            Log.e(TAG, "Ощибка загрузки данных", e);
+            Log.e("url for getJSONString", url);
+
+        } catch (JSONException e) {
+            Log.e(TAG, "Ошибка парсинга JSON", e);
         }
-            // catch (JSONException e) {
-           // Log.e(TAG, "Ошибка парсинга JSON", e);
-       // }
 
-        return item;
-    }
-
-    private String Parsing(String s, JSONObject jsonBody) throws IOException, JSONException {
-        JSONObject resultsJSONObject = jsonBody.getJSONObject("results");
-        s = String.valueOf(resultsJSONObject.get("formatted_address"));
-
-        //JSONObject formatted_addressJSONObject=resultsJSONObject.getJSONObject("formatted_address");
-
-        //JSONArray resultsJSONArray=jsonBody.getJSONArray("results");
-        // JSONObject resJSONObject=resultsJSONArray.getJSONObject(1);
-        //resultsJSONArray.
-        return s;
-
-
+        return "ERROR";
     }
 
 
