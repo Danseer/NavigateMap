@@ -10,6 +10,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.StreetViewPanoramaCamera;
 
 import java.io.IOException;
 
@@ -48,12 +49,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
-                    //Toast.makeText(getApplicationContext(),"onMapLongClick: " + latLng.latitude + "," + latLng.longitude,Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(),latLng.latitude + "," + latLng.longitude,Toast.LENGTH_LONG).show();
+                    String str= null;
                     try {
-                        new DataFetcher().fetch();
+                        str = new DataFetcher().fetch(latLng.latitude, latLng.longitude);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                    Toast.makeText(getApplicationContext(),str,Toast.LENGTH_LONG).show();
                 }
             });
        // }

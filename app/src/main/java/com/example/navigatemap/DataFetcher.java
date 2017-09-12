@@ -40,22 +40,22 @@ public class DataFetcher {
     }
 
 
-    public String fetch() throws IOException {
+    public String fetch(Double lat,Double lon) {
         String url = Uri.parse(API_URL)
                 .buildUpon()
-                //.appendQueryParameter("latlng", latlng)
-                .appendQueryParameter("latlng", "40.714224,-73.961452")
+                .appendQueryParameter("latlng", lat.toString()+','+lon.toString())
                 .appendQueryParameter("key", API_KEY)
                 .build().toString();
 
-
+/*
         try {
             String jsonString = getJSONString(url);
             return jsonString;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "error";
+        return "error";*/
+        return url;
     }
 
 
