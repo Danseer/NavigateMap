@@ -1,6 +1,7 @@
 package com.example.navigatemap;
 
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class DataFetcher {
     private static final String API_KEY = "AIzaSyDaafgvECggiEKFwvGUUqL8VIzgMqerLSI";
     private static final String API_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
+
     public DataFetcher() throws IOException {
     }
 
@@ -31,31 +33,54 @@ public class DataFetcher {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(URLSpec)
+                .url("https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=AIzaSyDaafgvECggiEKFwvGUUqL8VIzgMqerLSI")
                 .build();
         Response response = client.newCall(request).execute();
         String result = response.body().string();
 
         return result;
+
     }
 
 
-    public String fetch(Double lat,Double lon) {
+    public String fetch(Double lat, Double lng) {
+        String item = "err";
         String url = Uri.parse(API_URL)
                 .buildUpon()
-                .appendQueryParameter("latlng", lat.toString()+','+lon.toString())
+                .appendQueryParameter("latlng", lat.toString() + ',' + lng.toString())
                 .appendQueryParameter("key", API_KEY)
                 .build().toString();
 
-/*
+
         try {
-            String jsonString = getJSONString(url);
-            return jsonString;
+           String jsonString = getJSONString(url);
+            //JSONObject jsonBody = new JSONObject(jsonString);
+            //return Parsing(item, jsonBody);
+            return url;
+            //return jsonString;
         } catch (IOException e) {
-            e.printStackTrace();
+           e.printStackTrace();
+           Log.e(TAG, "Ощибка загрузки данных", e);
         }
-        return "error";*/
-        return url;
+            // catch (JSONException e) {
+           // Log.e(TAG, "Ошибка парсинга JSON", e);
+       // }
+
+        return item;
+    }
+
+    private String Parsing(String s, JSONObject jsonBody) throws IOException, JSONException {
+        JSONObject resultsJSONObject = jsonBody.getJSONObject("results");
+        s = String.valueOf(resultsJSONObject.get("formatted_address"));
+
+        //JSONObject formatted_addressJSONObject=resultsJSONObject.getJSONObject("formatted_address");
+
+        //JSONArray resultsJSONArray=jsonBody.getJSONArray("results");
+        // JSONObject resJSONObject=resultsJSONArray.getJSONObject(1);
+        //resultsJSONArray.
+        return s;
+
+
     }
 
 
